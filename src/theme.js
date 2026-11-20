@@ -87,6 +87,12 @@ const theme = createTheme({
   transitions: {
     easing: { easeOut: motion },
   },
+  // 포인트 그라디언트: Onflou 틸(700) → Onflou 세컨더리 블루, Tresorit 블루 그라디언트 띠 응용
+  gradient: {
+    // 배경 크기를 200%로 두고 위치를 옮기면 호버 시 색이 흐르듯 이동한다
+    point: `linear-gradient(120deg, ${teal[700]} 0%, #3F6DFF 50%, ${teal[700]} 100%)`,
+    overlay: 'linear-gradient(120deg, rgba(0, 158, 151, 0.9) 0%, rgba(63, 109, 255, 0.9) 100%)',
+  },
   motion: { hover: `transform 350ms ${motion}, border-color 350ms ${motion}, background-color 350ms ${motion}` },
   layout: { sidebarWidth: 264, detailWidth: 320 },
   components: {
