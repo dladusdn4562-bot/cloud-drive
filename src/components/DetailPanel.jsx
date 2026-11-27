@@ -96,7 +96,7 @@ function FileDetail({ file, onClose, onAction, onDownload, showClose }) {
       <Box sx={{ display: 'flex', gap: 0.75, flexWrap: 'wrap', mt: 1 }}>
         <Chip size="small" label={label} sx={{ bgcolor: 'grey.100' }} />
         {file.shared ? (
-          <Chip size="small" label="공유됨" sx={{ bgcolor: 'teal.50', color: 'teal.900' }} />
+          <Chip size="small" label="공유됨" sx={{ bgcolor: 'accent.50', color: 'accent.900' }} />
         ) : (
           <Chip size="small" icon={<LockOutlinedIcon />} label="나만 보기" sx={{ bgcolor: 'grey.100' }} />
         )}
@@ -141,7 +141,7 @@ function ActivityList({ activities }) {
       <Box component="ol" sx={{ listStyle: 'none', m: 0, p: 0, display: 'grid', gap: 2 }}>
         {activities.map((item) => (
           <Box component="li" key={item.id} sx={{ display: 'flex', gap: 1.5 }}>
-            <Avatar sx={{ width: 32, height: 32, fontSize: '0.8125rem', bgcolor: item.who === '나' ? 'grey.800' : 'teal.100', color: item.who === '나' ? '#FFFFFF' : 'teal.900' }}>
+            <Avatar sx={{ width: 32, height: 32, fontSize: '0.8125rem', bgcolor: item.who === '나' ? 'grey.800' : 'accent.100', color: item.who === '나' ? '#FFFFFF' : 'accent.900' }}>
               {item.who.slice(0, 1)}
             </Avatar>
             <Box sx={{ minWidth: 0 }}>

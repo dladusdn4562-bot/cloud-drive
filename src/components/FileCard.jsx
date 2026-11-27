@@ -19,7 +19,7 @@ function FileCard({ file, selected, onSelect, onToggleStar }) {
         borderRadius: '16px',
         border: 1,
         borderColor: selected ? 'primary.main' : 'divider',
-        bgcolor: selected ? 'teal.50' : 'background.paper',
+        bgcolor: selected ? 'accent.50' : 'background.paper',
         transition: (theme) => theme.motion.hover,
         '&:hover': { transform: 'scale(1.03)', borderColor: selected ? 'primary.main' : 'grey.300' },
         '&:hover .star-toggle, & .star-toggle:focus-visible': { opacity: 1 },

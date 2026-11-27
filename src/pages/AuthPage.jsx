@@ -70,7 +70,7 @@ function AuthPage({ onSignIn, onSignUp }) {
             <CloudRoundedIcon fontSize="small" />
           </Box>
           <Typography component="p" variant="h2">
-            Cloud Drive
+            안개드라이브
           </Typography>
         </Box>
 

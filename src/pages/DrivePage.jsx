@@ -113,7 +113,7 @@ function DrivePage({ user, onSignOut }) {
         <Box sx={{ flex: 1, display: 'flex', minWidth: 0 }}>
           <Box component="main" sx={{ flex: 1, minWidth: 0, px: { xs: 2, sm: 3, xl: 5 }, py: { xs: 3, sm: 4 } }}>
             <Box component="header" sx={{ mb: 3 }}>
-              <Typography variant="overline" component="p" sx={{ color: 'teal.700' }}>
+              <Typography variant="overline" component="p" sx={{ color: 'accent.700' }}>
                 {current.eyebrow}
               </Typography>
               <Typography variant="h1">{current.label}</Typography>

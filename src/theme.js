@@ -1,22 +1,24 @@
 import { createTheme } from '@mui/material/styles'
 
-// 디자인 토큰: references/cloud-drive/references.md 기반
-// 틸 포인트·회색 단계·Pretendard·모서리·알약 버튼: Onflou
+// 디자인 토큰: references/cloud-drive/references.md 기반 + 무채색 변경(사용자 요청)
+// 회색 단계·Pretendard·모서리·알약 버튼: Onflou
 // 텍스트·메타·구분선: Box / 선택 틴트: Proton 패턴 / 아이브로 소제목: Onflou·pCloud
+// 색상은 사용자 요청으로 전부 무채색(검정·회색)으로 바꾸고, 오류·성공 색만 남겼다.
 const fontFamily =
   '"Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Malgun Gothic", sans-serif'
 
-const teal = {
-  50: '#E6FBFA',
-  100: '#CCF7F5',
-  200: '#99EFEB',
-  300: '#66E7E1',
-  400: '#33DFD7',
-  500: '#00CFC5',
-  600: '#00B8AF',
-  700: '#009E97',
-  800: '#00847F',
-  900: '#005A57',
+// 포인트 단계: 50~100은 선택 틴트, 500은 메인(검정), 700~900은 강조 텍스트
+const accent = {
+  50: '#F2F2F2',
+  100: '#E6E6E6',
+  200: '#CCCCCC',
+  300: '#4D4D4D',
+  400: '#333333',
+  500: '#1A1A1A',
+  600: '#0D0D0D',
+  700: '#333333',
+  800: '#1F1F1F',
+  900: '#111111',
 }
 
 const gray = {
@@ -32,35 +34,35 @@ const gray = {
   900: '#111111',
 }
 
-const ink = '#151F26'
-const line = '#DDE6ED'
+const ink = '#161616'
+const line = '#E3E3E3'
 const motion = 'cubic-bezier(0.2, 0, 0, 1)'
 
 const theme = createTheme({
   palette: {
-    primary: { main: teal[500], light: teal[300], dark: teal[700], contrastText: gray[900] },
-    secondary: { main: '#3F6DFF', light: '#7399FF', dark: '#2448C7', contrastText: '#FFFFFF' },
+    primary: { main: accent[500], light: accent[300], dark: accent[600], contrastText: '#FFFFFF' },
+    secondary: { main: gray[500], light: gray[400], dark: gray[700], contrastText: '#FFFFFF' },
     error: { main: '#FF6568', contrastText: '#FFFFFF' },
     success: { main: '#388E3C' },
-    teal,
+    accent,
     grey: gray,
     background: { default: gray[50], paper: '#FFFFFF' },
     text: { primary: ink, secondary: gray[600], disabled: gray[400] },
-    meta: '#8EA6B2',
+    meta: gray[500],
     divider: line,
-    action: { hover: gray[100], selected: teal[50] },
-    // 파일 종류 색: 레퍼런스 팔레트에서 가져온 값 (괄호 안이 출처)
+    action: { hover: gray[100], selected: accent[50] },
+    // 파일 종류 색: 무채색 단계로 통일하고 아이콘 모양으로 구분한다
     fileType: {
-      folder: teal[600], // Onflou primary-600
-      doc: '#3F6DFF', // Onflou secondary
-      sheet: '#388E3C', // Onflou success
-      slide: '#FA551E', // Dropbox accent
-      pdf: '#FF6568', // Onflou error
-      image: '#6D4AFF', // Proton primary
-      video: '#C937E4', // Box accent
-      audio: '#1DBAF6', // Box accent
-      zip: '#E1AD4A', // Box accent
-      other: gray[500], // Onflou gray-500
+      folder: gray[800],
+      doc: gray[700],
+      sheet: gray[700],
+      slide: gray[700],
+      pdf: gray[700],
+      image: gray[600],
+      video: gray[600],
+      audio: gray[600],
+      zip: gray[800], // 중요 표시(별) 색으로도 쓰인다
+      other: gray[500],
     },
   },
   typography: {
@@ -80,18 +82,17 @@ const theme = createTheme({
   spacing: 8,
   shadows: [
     'none',
-    '0 1px 2px rgba(21, 31, 38, 0.06)',
-    '0 4px 16px rgba(21, 31, 38, 0.08)',
-    ...Array(22).fill('0 12px 32px rgba(21, 31, 38, 0.12)'),
+    '0 1px 2px rgba(0, 0, 0, 0.06)',
+    '0 4px 16px rgba(0, 0, 0, 0.08)',
+    ...Array(22).fill('0 12px 32px rgba(0, 0, 0, 0.12)'),
   ],
   transitions: {
     easing: { easeOut: motion },
   },
-  // 포인트 그라디언트: Onflou 틸(700) → Onflou 세컨더리 블루, Tresorit 블루 그라디언트 띠 응용
+  // 포인트 그라디언트: 검정 → 짙은 회색, 배경 크기를 200%로 두고 호버 시 위치를 옮긴다
   gradient: {
-    // 배경 크기를 200%로 두고 위치를 옮기면 호버 시 색이 흐르듯 이동한다
-    point: `linear-gradient(120deg, ${teal[700]} 0%, #3F6DFF 50%, ${teal[700]} 100%)`,
-    overlay: 'linear-gradient(120deg, rgba(0, 158, 151, 0.9) 0%, rgba(63, 109, 255, 0.9) 100%)',
+    point: `linear-gradient(120deg, ${gray[900]} 0%, ${gray[600]} 50%, ${gray[900]} 100%)`,
+    overlay: 'linear-gradient(120deg, rgba(17, 17, 17, 0.9) 0%, rgba(102, 102, 102, 0.9) 100%)',
   },
   motion: { hover: `transform 350ms ${motion}, border-color 350ms ${motion}, background-color 350ms ${motion}` },
   layout: { sidebarWidth: 264, detailWidth: 320 },
@@ -108,8 +109,8 @@ const theme = createTheme({
           '&:active': { backgroundColor: gray[200] },
         },
         containedPrimary: {
-          '&:hover': { backgroundColor: teal[400] },
-          '&:active': { backgroundColor: teal[600] },
+          '&:hover': { backgroundColor: accent[400] },
+          '&:active': { backgroundColor: accent[600] },
         },
       },
     },
@@ -124,7 +125,7 @@ const theme = createTheme({
           border: 0,
           borderRadius: 999,
           color: gray[500],
-          '&.Mui-selected': { backgroundColor: '#FFFFFF', color: ink, boxShadow: '0 1px 2px rgba(21, 31, 38, 0.1)' },
+          '&.Mui-selected': { backgroundColor: '#FFFFFF', color: ink, boxShadow: '0 1px 2px rgba(0, 0, 0, 0.1)' },
           '&.Mui-selected:hover': { backgroundColor: '#FFFFFF' },
         },
       },

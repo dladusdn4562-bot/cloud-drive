@@ -52,7 +52,7 @@ function Sidebar({ section, onSectionChange, usedBytes, mobileOpen, onClose }) {
           <CloudRoundedIcon fontSize="small" />
         </Box>
         <Typography component="p" variant="h2">
-          Cloud Drive
+          안개드라이브
         </Typography>
       </Box>
 
@@ -75,11 +75,11 @@ function Sidebar({ section, onSectionChange, usedBytes, mobileOpen, onClose }) {
                   px: 1.5,
                   minHeight: 42,
                   color: 'text.secondary',
-                  '&.Mui-selected': { bgcolor: 'teal.50', color: 'teal.900' },
-                  '&.Mui-selected:hover': { bgcolor: 'teal.100' },
+                  '&.Mui-selected': { bgcolor: 'accent.50', color: 'accent.900' },
+                  '&.Mui-selected:hover': { bgcolor: 'accent.100' },
                 }}
               >
-                <ListItemIcon sx={{ minWidth: 36, color: selected ? 'teal.700' : 'grey.500' }}>
+                <ListItemIcon sx={{ minWidth: 36, color: selected ? 'accent.700' : 'grey.500' }}>
                   <Icon fontSize="small" />
                 </ListItemIcon>
                 <ListItemText

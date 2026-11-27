@@ -153,7 +153,7 @@ function FileBrowser({ files, view, onViewChange, filter, onFilterChange, select
                     sx={{
                       cursor: 'pointer',
                       '& td': { borderColor: 'divider', py: 1.25 },
-                      '&.Mui-selected, &.Mui-selected:hover': { bgcolor: 'teal.50' },
+                      '&.Mui-selected, &.Mui-selected:hover': { bgcolor: 'accent.50' },
                       '&:focus-visible': { outline: '2px solid', outlineColor: 'primary.main', outlineOffset: -2 },
                     }}
                   >
