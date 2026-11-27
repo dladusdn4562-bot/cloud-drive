@@ -7,7 +7,7 @@ import ArrowForwardRoundedIcon from '@mui/icons-material/ArrowForwardRounded'
 
 const hasFiles = (event) => Array.from(event.dataTransfer?.types ?? []).includes('Files')
 
-function UploadDropzone({ inputRef, onFiles }) {
+function UploadDropzone({ inputRef, onFiles, uploading }) {
   const [dragging, setDragging] = useState(false)
   const depth = useRef(0)
 
@@ -128,7 +128,7 @@ function UploadDropzone({ inputRef, onFiles }) {
               fontWeight: 500,
             }}
           >
-            데모 화면: 서버에 저장되지 않고 새로고침하면 사라져요
+            {uploading ? '업로드 중이에요…' : '파일 하나당 최대 50MB · 나만 볼 수 있게 저장돼요'}
           </Typography>
         </Box>
 
@@ -151,7 +151,7 @@ function UploadDropzone({ inputRef, onFiles }) {
             boxShadow: '0 6px 20px rgba(17, 17, 17, 0.18)',
           }}
         >
-          업로드
+          {uploading ? '업로드 중' : '업로드'}
           <ArrowForwardRoundedIcon
             className="upload-arrow"
             fontSize="small"

@@ -1,5 +1,6 @@
 import { useCallback, useMemo, useRef, useState } from 'react'
 import Box from '@mui/material/Box'
+import LinearProgress from '@mui/material/LinearProgress'
 import Snackbar from '@mui/material/Snackbar'
 import Typography from '@mui/material/Typography'
 import Sidebar from '../components/Sidebar.jsx'
@@ -8,10 +9,11 @@ import StatsStrip from '../components/StatsStrip.jsx'
 import UploadDropzone from '../components/UploadDropzone.jsx'
 import FileBrowser from '../components/FileBrowser.jsx'
 import DetailPanel from '../components/DetailPanel.jsx'
-import { activities, initialFiles, matchesTypeFilter, sections, typeFromName } from '../data/files.js'
+import { matchesTypeFilter, sections } from '../data/files.js'
+import useFiles from '../hooks/useFiles.js'
 
 const emptyMessages = {
-  drive: '조건에 맞는 파일이 없어요.',
+  drive: '아직 올린 파일이 없어요. 파일을 끌어다 놓아 보세요.',
   recent: '최근 항목이 없어요.',
   shared: '공유된 파일이 없어요.',
   starred: '중요 표시한 파일이 없어요.',
@@ -21,8 +23,8 @@ const emptyMessages = {
 const byModified = (a, b) => new Date(b.modified) - new Date(a.modified)
 const foldersFirst = (a, b) => (a.type === 'folder') === (b.type === 'folder') ? byModified(a, b) : a.type === 'folder' ? -1 : 1
 
-function DrivePage() {
-  const [files, setFiles] = useState(initialFiles)
+function DrivePage({ user, onSignOut }) {
+  const { files, loading, uploading, upload, download, toggleStar } = useFiles(user.id)
   const [section, setSection] = useState('drive')
   const [filter, setFilter] = useState('all')
   const [query, setQuery] = useState('')
@@ -52,13 +54,14 @@ function DrivePage() {
 
   const selectedFile = files.find((file) => file.id === selectedId) ?? null
 
+  const activities = useMemo(
+    () => files.slice(0, 5).map((file) => ({ id: file.id, who: '나', action: '업로드', target: file.name, at: file.modified })),
+    [files],
+  )
+
   const handleSelect = (id) => {
     setSelectedId((prev) => (prev === id ? null : id))
     setDetailOpen(true)
-  }
-
-  const handleToggleStar = (id) => {
-    setFiles((prev) => prev.map((file) => (file.id === id ? { ...file, starred: !file.starred } : file)))
   }
 
   const handleSectionChange = (id) => {
@@ -66,43 +69,24 @@ function DrivePage() {
     setSelectedId(null)
   }
 
-  // 업로드: DB 연결 전이라 브라우저 메모리의 목록에만 추가한다.
-  const handleFiles = useCallback((fileList) => {
-    const added = Array.from(fileList ?? []).map((file, index) => ({
-      id: `up-${Date.now()}-${index}`,
-      name: file.name,
-      type: typeFromName(file.name),
-      size: file.size,
-      modified: new Date().toISOString(),
-      owner: '나',
-      shared: false,
-      starred: false,
-    }))
-    if (!added.length) return
-    setFiles((prev) => [...added, ...prev])
+  // 업로드: Supabase Storage에 원본을 저장하고 목록에 반영한다.
+  const handleFiles = useCallback(async (fileList) => {
+    if (!fileList?.length || uploading) return
     setSection('drive')
     setFilter('all')
-    setToast(`파일 ${added.length}개를 추가했어요`)
-  }, [])
+    setToast('업로드 중이에요…')
+    const { done, failed, tooBig } = await upload(fileList)
+    const notes = [
+      done && `${done}개 업로드 완료`,
+      failed && `${failed}개 실패`,
+      tooBig && `${tooBig}개는 50MB를 넘어 제외`,
+    ].filter(Boolean)
+    setToast(notes.join(' · ') || '업로드할 파일이 없어요')
+  }, [upload, uploading])
 
-  const handleNewFolder = () => {
-    const count = files.filter((file) => file.type === 'folder' && file.name.startsWith('새 폴더')).length
-    const folder = {
-      id: `folder-${Date.now()}`,
-      name: count ? `새 폴더 (${count + 1})` : '새 폴더',
-      type: 'folder',
-      size: 0,
-      modified: new Date().toISOString(),
-      owner: '나',
-      shared: false,
-      starred: false,
-      items: 0,
-    }
-    setFiles((prev) => [folder, ...prev])
-    setSection('drive')
-    setFilter('all')
-    setSelectedId(folder.id)
-    setToast(`'${folder.name}'를 만들었어요`)
+  const handleDownload = async (file) => {
+    const error = await download(file)
+    setToast(error ? '다운로드에 실패했어요' : `'${file.name}' 다운로드를 시작했어요`)
   }
 
   return (
@@ -121,7 +105,9 @@ function DrivePage() {
           onQueryChange={setQuery}
           onMenuClick={() => setNavOpen(true)}
           onUploadClick={() => uploadInput.current?.click()}
-          onNewFolder={handleNewFolder}
+          uploading={uploading}
+          userEmail={user.email}
+          onSignOut={onSignOut}
         />
 
         <Box sx={{ flex: 1, display: 'flex', minWidth: 0 }}>
@@ -138,7 +124,8 @@ function DrivePage() {
 
             <Box sx={{ display: 'grid', gap: { xs: 2.5, sm: 3 } }}>
               <StatsStrip files={files} usedBytes={usedBytes} />
-              <UploadDropzone inputRef={uploadInput} onFiles={handleFiles} />
+              <UploadDropzone inputRef={uploadInput} onFiles={handleFiles} uploading={uploading} />
+              {loading && <LinearProgress aria-label="파일 목록 불러오는 중" />}
               <FileBrowser
                 files={visibleFiles}
                 view={view}
@@ -147,8 +134,8 @@ function DrivePage() {
                 onFilterChange={setFilter}
                 selectedId={selectedId}
                 onSelect={handleSelect}
-                onToggleStar={handleToggleStar}
-                emptyMessage={query ? `'${query}'에 대한 검색 결과가 없어요.` : emptyMessages[section]}
+                onToggleStar={toggleStar}
+                emptyMessage={loading ? '불러오는 중이에요…' : query ? `'${query}'에 대한 검색 결과가 없어요.` : emptyMessages[section]}
               />
             </Box>
           </Box>
@@ -159,6 +146,7 @@ function DrivePage() {
             open={detailOpen}
             onClose={() => setDetailOpen(false)}
             onAction={setToast}
+            onDownload={handleDownload}
           />
         </Box>
       </Box>

@@ -14,13 +14,13 @@ import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined'
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
 import { formatBytes, formatDate, typeMeta } from '../data/files.js'
 
-function DetailPanel({ file, activities, open, onClose, onAction }) {
+function DetailPanel({ file, activities, open, onClose, onAction, onDownload }) {
   const theme = useTheme()
   const isWide = useMediaQuery(theme.breakpoints.up('lg'))
   const width = theme.layout.detailWidth
 
   const content = file ? (
-    <FileDetail file={file} onClose={onClose} onAction={onAction} showClose={!isWide} />
+    <FileDetail file={file} onClose={onClose} onAction={onAction} onDownload={onDownload} showClose={!isWide} />
   ) : (
     <ActivityList activities={activities} />
   )
@@ -54,7 +54,7 @@ function DetailPanel({ file, activities, open, onClose, onAction }) {
   )
 }
 
-function FileDetail({ file, onClose, onAction, showClose }) {
+function FileDetail({ file, onClose, onAction, onDownload, showClose }) {
   const { icon: Icon, label } = typeMeta[file.type]
   const rows = [
     ['종류', label],
@@ -106,7 +106,7 @@ function FileDetail({ file, onClose, onAction, showClose }) {
         <Button variant="contained" startIcon={<LinkRoundedIcon />} onClick={() => onAction('공유 링크를 만들었어요 (데모)')}>
           공유
         </Button>
-        <Button variant="outlined" startIcon={<FileDownloadOutlinedIcon />} onClick={() => onAction('데모 화면에서는 다운로드할 수 없어요')}>
+        <Button variant="outlined" startIcon={<FileDownloadOutlinedIcon />} onClick={() => onDownload(file)}>
           받기
         </Button>
       </Box>

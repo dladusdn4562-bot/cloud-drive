@@ -8,10 +8,12 @@ import Toolbar from '@mui/material/Toolbar'
 import Tooltip from '@mui/material/Tooltip'
 import MenuRoundedIcon from '@mui/icons-material/MenuRounded'
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded'
-import CreateNewFolderOutlinedIcon from '@mui/icons-material/CreateNewFolderOutlined'
 import FileUploadOutlinedIcon from '@mui/icons-material/FileUploadOutlined'
+import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded'
 
-function TopBar({ query, onQueryChange, onMenuClick, onUploadClick, onNewFolder }) {
+function TopBar({ query, onQueryChange, onMenuClick, onUploadClick, uploading, userEmail, onSignOut }) {
+  const account = userEmail ?? '내 계정'
+
   return (
     <AppBar
       position="sticky"
@@ -60,33 +62,28 @@ function TopBar({ query, onQueryChange, onMenuClick, onUploadClick, onNewFolder 
         </Box>
 
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, ml: 'auto' }}>
-          <Tooltip title="새 폴더">
-            <IconButton onClick={onNewFolder} aria-label="새 폴더" sx={{ display: { sm: 'none' } }}>
-              <CreateNewFolderOutlinedIcon />
-            </IconButton>
-          </Tooltip>
-          <Button
-            variant="outlined"
-            startIcon={<CreateNewFolderOutlinedIcon />}
-            onClick={onNewFolder}
-            sx={{ display: { xs: 'none', sm: 'inline-flex' } }}
-          >
-            새 폴더
-          </Button>
           <Button
             variant="contained"
             startIcon={<FileUploadOutlinedIcon />}
             onClick={onUploadClick}
+            disabled={uploading}
             sx={{ minWidth: 0, px: { xs: 1.75, sm: 2.25 } }}
           >
-            업로드
+            {uploading ? '업로드 중' : '업로드'}
           </Button>
-          <Avatar
-            sx={{ width: 36, height: 36, ml: 0.5, bgcolor: 'grey.800', fontSize: '0.875rem', display: { xs: 'none', sm: 'flex' } }}
-            alt="내 계정"
-          >
-            나
-          </Avatar>
+          <Tooltip title={account}>
+            <Avatar
+              sx={{ width: 36, height: 36, ml: 0.5, bgcolor: 'grey.800', fontSize: '0.875rem', display: { xs: 'none', sm: 'flex' } }}
+              alt={account}
+            >
+              {account.slice(0, 1).toUpperCase()}
+            </Avatar>
+          </Tooltip>
+          <Tooltip title="로그아웃">
+            <IconButton onClick={onSignOut} aria-label="로그아웃">
+              <LogoutRoundedIcon />
+            </IconButton>
+          </Tooltip>
         </Box>
       </Toolbar>
     </AppBar>
