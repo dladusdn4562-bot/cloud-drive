@@ -14,14 +14,13 @@ const toFile = (row) => ({
   storagePath: row.storage_path,
 })
 
-function useFiles(userId) {
+function useFiles() {
   const [files, setFiles] = useState([])
   const [loading, setLoading] = useState(true)
   const [uploading, setUploading] = useState(false)
 
-  // 목록 조회: RLS로 로그인한 사용자 본인의 파일만 돌아온다.
+  // 목록 조회: 공개 드라이브라 저장된 모든 파일을 불러온다.
   useEffect(() => {
-    if (!userId) return undefined
     let active = true
     supabase
       .from('files')
@@ -35,7 +34,7 @@ function useFiles(userId) {
     return () => {
       active = false
     }
-  }, [userId])
+  }, [])
 
   // 업로드: Storage에 원본을 올리고 files 테이블에 메타데이터를 저장한다.
   const upload = useCallback(async (fileList) => {
@@ -46,7 +45,7 @@ function useFiles(userId) {
     setUploading(true)
     for (const file of targets) {
       const ext = file.name.includes('.') ? `.${file.name.split('.').pop()}` : ''
-      const path = `${userId}/${crypto.randomUUID()}${ext}`
+      const path = `public/${crypto.randomUUID()}${ext}`
       const { error: storageError } = await supabase.storage.from(BUCKET).upload(path, file, { contentType: file.type || undefined })
       if (storageError) continue
       const { data, error } = await supabase
@@ -63,9 +62,9 @@ function useFiles(userId) {
     }
     setUploading(false)
     return { done, failed: targets.length - done, tooBig: tooBig.length }
-  }, [userId])
+  }, [])
 
-  // 다운로드: 비공개 버킷에서 인증된 요청으로 받아 원래 파일명(한글 포함)으로 저장한다.
+  // 다운로드: 비공개 버킷에서 받아 원래 파일명(한글 포함)으로 저장한다.
   const download = useCallback(async (file) => {
     const { data, error } = await supabase.storage.from(BUCKET).download(file.storagePath)
     if (error) return error
