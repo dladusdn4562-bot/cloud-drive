@@ -140,18 +140,19 @@ function ActivityList({ activities }) {
       </Typography>
       <Box component="ol" sx={{ listStyle: 'none', m: 0, p: 0, display: 'grid', gap: 2 }}>
         {activities.map((item) => (
-          <Box component="li" key={item.id} sx={{ display: 'flex', gap: 1.5 }}>
-            <Avatar sx={{ width: 32, height: 32, fontSize: '0.8125rem', bgcolor: item.who === '나' ? 'grey.800' : 'accent.100', color: item.who === '나' ? '#FFFFFF' : 'accent.900' }}>
+          <Box component="li" key={item.id} sx={{ display: 'flex', gap: 1.5, minWidth: 0 }}>
+            <Avatar sx={{ width: 32, height: 32, flexShrink: 0, fontSize: '0.8125rem', bgcolor: item.who === '나' ? 'grey.800' : 'accent.100', color: item.who === '나' ? '#FFFFFF' : 'accent.900' }}>
               {item.who.slice(0, 1)}
             </Avatar>
-            <Box sx={{ minWidth: 0 }}>
+            <Box sx={{ minWidth: 0, flex: 1 }}>
               <Typography variant="body2">
                 <Box component="strong" sx={{ fontWeight: 600 }}>
                   {item.who}
                 </Box>
                 님이 {item.action}
               </Typography>
-              <Typography variant="body2" noWrap sx={{ color: 'text.secondary' }} title={item.target}>
+              {/* 띄어쓰기 없는 긴 파일명도 패널 너비 안에서 자동 줄바꿈한다 */}
+              <Typography variant="body2" sx={{ color: 'text.secondary', overflowWrap: 'anywhere' }}>
                 {item.target}
               </Typography>
               <Typography variant="caption" sx={{ color: 'grey.500' }}>
