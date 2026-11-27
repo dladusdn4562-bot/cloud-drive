@@ -128,7 +128,7 @@ function UploadDropzone({ inputRef, onFiles, uploading }) {
               fontWeight: 500,
             }}
           >
-            {uploading ? '업로드 중이에요…' : '파일 하나당 최대 50MB · 링크가 있는 누구나 볼 수 있어요'}
+            {uploading ? '업로드 중이에요…' : '파일 하나당 최대 50MB · 나만 볼 수 있게 저장돼요'}
           </Typography>
         </Box>
 

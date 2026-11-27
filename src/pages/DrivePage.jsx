@@ -23,8 +23,8 @@ const emptyMessages = {
 const byModified = (a, b) => new Date(b.modified) - new Date(a.modified)
 const foldersFirst = (a, b) => (a.type === 'folder') === (b.type === 'folder') ? byModified(a, b) : a.type === 'folder' ? -1 : 1
 
-function DrivePage() {
-  const { files, loading, uploading, upload, download, toggleStar } = useFiles()
+function DrivePage({ user, onSignOut }) {
+  const { files, loading, uploading, upload, download, toggleStar } = useFiles(user.id)
   const [section, setSection] = useState('drive')
   const [filter, setFilter] = useState('all')
   const [query, setQuery] = useState('')
@@ -106,6 +106,8 @@ function DrivePage() {
           onMenuClick={() => setNavOpen(true)}
           onUploadClick={() => uploadInput.current?.click()}
           uploading={uploading}
+          userEmail={user.email}
+          onSignOut={onSignOut}
         />
 
         <Box sx={{ flex: 1, display: 'flex', minWidth: 0 }}>
