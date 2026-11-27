@@ -26,7 +26,7 @@ export const typeMeta = {
 const GB = 1024 ** 3
 const KB = 1024
 
-export const storageQuota = 100 * GB
+export const storageQuota = 15 * GB
 
 export const sections = [
   { id: 'drive', label: '내 드라이브', eyebrow: 'MY DRIVE' },

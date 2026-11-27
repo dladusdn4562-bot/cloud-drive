@@ -23,8 +23,9 @@ const emptyMessages = {
 const byModified = (a, b) => new Date(b.modified) - new Date(a.modified)
 const foldersFirst = (a, b) => (a.type === 'folder') === (b.type === 'folder') ? byModified(a, b) : a.type === 'folder' ? -1 : 1
 
-function DrivePage({ user, onSignOut }) {
-  const { files, loading, uploading, upload, download, toggleStar } = useFiles(user.id)
+function DrivePage() {
+  const { files, loading, uploading, downloading, upload, download, downloadMany, toggleStar } = useFiles()
+  const [checkedIds, setCheckedIds] = useState(() => new Set())
   const [section, setSection] = useState('drive')
   const [filter, setFilter] = useState('all')
   const [query, setQuery] = useState('')
@@ -67,6 +68,30 @@ function DrivePage({ user, onSignOut }) {
   const handleSectionChange = (id) => {
     setSection(id)
     setSelectedId(null)
+    setCheckedIds(new Set())
+  }
+
+  // 체크박스 선택: 화면에 보이는 파일 기준으로 선택·해제한다.
+  const handleToggleCheck = (id) => {
+    setCheckedIds((prev) => {
+      const next = new Set(prev)
+      if (next.has(id)) next.delete(id)
+      else next.add(id)
+      return next
+    })
+  }
+
+  const handleToggleAll = () => {
+    const allChecked = visibleFiles.length > 0 && visibleFiles.every((file) => checkedIds.has(file.id))
+    setCheckedIds(allChecked ? new Set() : new Set(visibleFiles.map((file) => file.id)))
+  }
+
+  const handleDownloadMany = async (targets) => {
+    if (!targets.length || downloading) return
+    setToast(targets.length > 1 ? `파일 ${targets.length}개를 zip으로 묶는 중이에요…` : '다운로드를 준비하고 있어요…')
+    const { done, failed } = await downloadMany(targets)
+    if (!done) setToast('다운로드에 실패했어요')
+    else setToast(failed ? `${done}개 다운로드 · ${failed}개 실패` : `${done}개 파일 다운로드를 시작했어요`)
   }
 
   // 업로드: Supabase Storage에 원본을 저장하고 목록에 반영한다.
@@ -75,11 +100,12 @@ function DrivePage({ user, onSignOut }) {
     setSection('drive')
     setFilter('all')
     setToast('업로드 중이에요…')
-    const { done, failed, tooBig } = await upload(fileList)
+    const { done, failed, tooBig, overQuota } = await upload(fileList)
     const notes = [
       done && `${done}개 업로드 완료`,
       failed && `${failed}개 실패`,
       tooBig && `${tooBig}개는 50MB를 넘어 제외`,
+      overQuota && `${overQuota}개는 15GB 용량을 넘어 제외`,
     ].filter(Boolean)
     setToast(notes.join(' · ') || '업로드할 파일이 없어요')
   }, [upload, uploading])
@@ -106,8 +132,6 @@ function DrivePage({ user, onSignOut }) {
           onMenuClick={() => setNavOpen(true)}
           onUploadClick={() => uploadInput.current?.click()}
           uploading={uploading}
-          userEmail={user.email}
-          onSignOut={onSignOut}
         />
 
         <Box sx={{ flex: 1, display: 'flex', minWidth: 0 }}>
@@ -135,6 +159,14 @@ function DrivePage({ user, onSignOut }) {
                 selectedId={selectedId}
                 onSelect={handleSelect}
                 onToggleStar={toggleStar}
+                checkedIds={checkedIds}
+                onToggleCheck={handleToggleCheck}
+                onToggleAll={handleToggleAll}
+                onClearChecked={() => setCheckedIds(new Set())}
+                onDownload={handleDownload}
+                onDownloadSelected={() => handleDownloadMany(visibleFiles.filter((file) => checkedIds.has(file.id)))}
+                onDownloadAll={() => handleDownloadMany(visibleFiles)}
+                downloading={downloading}
                 emptyMessage={loading ? '불러오는 중이에요…' : query ? `'${query}'에 대한 검색 결과가 없어요.` : emptyMessages[section]}
               />
             </Box>

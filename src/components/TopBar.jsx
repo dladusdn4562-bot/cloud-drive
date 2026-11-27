@@ -5,15 +5,11 @@ import Button from '@mui/material/Button'
 import IconButton from '@mui/material/IconButton'
 import InputBase from '@mui/material/InputBase'
 import Toolbar from '@mui/material/Toolbar'
-import Tooltip from '@mui/material/Tooltip'
 import MenuRoundedIcon from '@mui/icons-material/MenuRounded'
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded'
 import FileUploadOutlinedIcon from '@mui/icons-material/FileUploadOutlined'
-import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded'
 
-function TopBar({ query, onQueryChange, onMenuClick, onUploadClick, uploading, userEmail, onSignOut }) {
-  const account = userEmail ?? '내 계정'
-
+function TopBar({ query, onQueryChange, onMenuClick, onUploadClick, uploading }) {
   return (
     <AppBar
       position="sticky"
@@ -71,19 +67,12 @@ function TopBar({ query, onQueryChange, onMenuClick, onUploadClick, uploading, u
           >
             {uploading ? '업로드 중' : '업로드'}
           </Button>
-          <Tooltip title={account}>
-            <Avatar
-              sx={{ width: 36, height: 36, ml: 0.5, bgcolor: 'grey.800', fontSize: '0.875rem', display: { xs: 'none', sm: 'flex' } }}
-              alt={account}
-            >
-              {account.slice(0, 1).toUpperCase()}
-            </Avatar>
-          </Tooltip>
-          <Tooltip title="로그아웃">
-            <IconButton onClick={onSignOut} aria-label="로그아웃">
-              <LogoutRoundedIcon />
-            </IconButton>
-          </Tooltip>
+          <Avatar
+            sx={{ width: 36, height: 36, ml: 0.5, bgcolor: 'grey.800', fontSize: '0.875rem', display: { xs: 'none', sm: 'flex' } }}
+            alt="내 계정"
+          >
+            나
+          </Avatar>
         </Box>
       </Toolbar>
     </AppBar>
